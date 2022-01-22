@@ -15,17 +15,35 @@ public class Consumer implements Runnable {
     public void run() {
         try {
             while (true) {
-                while (!queue.isEmpty()) {
-                    String str = queue.element();
-                    if (str.length() <= 100) {
-                        System.out.println("cons1: " + str);
-                        queue.remove(str);
-                    }
-                    if (str.equals("--")) return;
+                String str = queue.take();
+                if (str.length() <= 100) {
+                    System.out.println("cons1: " + str);
+                } else {
+                    queue.put(str);
                 }
+                if (str.equals("----------.----------.----------.----------.----------.----------.----------.----------.----------.----------."))
+                    return;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+//    @Override
+//    public void run() {
+//        try {
+//            while (true) {
+//                while (!queue.isEmpty()) {
+//                    String str = queue.element();
+//                    if (str.length() <= 100) {
+//                        System.out.println("cons1: " + str);
+//                        queue.remove(str);
+//                    }
+//                    if (str.equals("--")) return;
+//                }
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 }
