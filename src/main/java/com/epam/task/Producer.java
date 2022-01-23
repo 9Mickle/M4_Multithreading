@@ -1,4 +1,4 @@
-package com.epam.Test;
+package com.epam.task;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,9 +19,9 @@ public class Producer implements Runnable {
             for (String str : Files.readAllLines(Path.of("./data/data.txt"))) {
                 queue.put(str);
             }
-            // Для consumer1.
+            // Стоп слово для consumer2.
             queue.put("--");
-            // Строка более 100 символов для consumer2.
+            // Стоп слово для consumer1.
             queue.put("----------.----------.----------.----------.----------.----------.----------.----------.----------.----------.");
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
