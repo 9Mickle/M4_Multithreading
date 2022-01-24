@@ -1,19 +1,17 @@
 package com.epam.task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Consumer implements Runnable{
+public class Consumer implements Callable<ConcurrentHashMap<String, List<String>>> {
 
     private final BlockingQueue<String> queue;
     private final ConcurrentHashMap<String, List<String>> generalMap;
 
     private final List<String> collection = new ArrayList<>();
-    private final Map<String, Integer> resultMap = new HashMap<>();
 
     public Consumer(BlockingQueue<String> queue, ConcurrentHashMap<String, List<String>> map) {
         this.queue = queue;
@@ -21,9 +19,7 @@ public class Consumer implements Runnable{
     }
 
     @Override
-    public void run() {
-        final String STOP_STRING = "----------.----------.----------.----------.----------.----------.----------.----------.----------.----------.";
-        final String USELESS = "--";
+    public ConcurrentHashMap<String, List<String>> call() {
         final String threadShortName = "cons1";
 
         Thread.currentThread().setName(threadShortName);
@@ -31,25 +27,22 @@ public class Consumer implements Runnable{
             while (true) {
                 if (!queue.isEmpty()) {
                     String str = queue.peek();
-                    if (str != null) {
-                        if (str.length() <= 100) {
-                            collection.add(str);
-                            System.out.println(threadShortName + ": " + str);
-                            queue.remove(str);
-                        }
-                        if (str.equals(STOP_STRING)) {
-                            collection.remove(USELESS);
-                            generalMap.put(threadShortName, collection);
-                            resultMap.put(threadShortName, getCountWords(collection));
-                            System.out.println("\n" + resultMap);
-                            return;
-                        }
+                    if (str != null && str.length() <= 100) {
+                        collection.add(str);
+                        System.out.println(threadShortName + ": " + str);
+                        queue.remove(str);
+                    }
+                } else {
+                    if (Producer.isDone()) {
+                        generalMap.put(threadShortName, List.of(String.valueOf(getCountWords(collection))));
+                        return generalMap;
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return generalMap;
     }
 
     private Integer getCountWords(List<String> collection) {
