@@ -6,7 +6,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Consumer implements Callable<ConcurrentHashMap<String, List<String>>> {
+public class Consumer implements Callable<Object> {
 
     private final BlockingQueue<String> queue;
     private final ConcurrentHashMap<String, List<String>> generalMap;
@@ -19,7 +19,7 @@ public class Consumer implements Callable<ConcurrentHashMap<String, List<String>
     }
 
     @Override
-    public ConcurrentHashMap<String, List<String>> call() {
+    public Object call() {
         final String threadShortName = "cons1";
 
         Thread.currentThread().setName(threadShortName);
@@ -34,20 +34,14 @@ public class Consumer implements Callable<ConcurrentHashMap<String, List<String>
                     }
                 } else {
                     if (Producer.isDone()) {
-                        generalMap.put(threadShortName, List.of(String.valueOf(getCountWords(collection))));
-                        return generalMap;
+                        generalMap.put(threadShortName, collection);
+                        return null;
                     }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return generalMap;
-    }
-
-    private Integer getCountWords(List<String> collection) {
-        return collection.stream()
-                .map(s -> s.split(" ").length)
-                .reduce(0, Integer::sum);
+        return null;
     }
 }

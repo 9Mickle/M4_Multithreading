@@ -3,12 +3,10 @@ package com.epam.task;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 
-public class Producer implements Callable<ConcurrentHashMap<String, List<String>>> {
+public class Producer implements Callable<Object> {
 
     private static boolean done = false;
     private final BlockingQueue<String> queue;
@@ -18,7 +16,7 @@ public class Producer implements Callable<ConcurrentHashMap<String, List<String>
     }
 
     @Override
-    public ConcurrentHashMap<String, List<String>> call() {
+    public Object call() {
         try {
             Files.lines(Path.of("./data/data.txt")).forEach(e -> {
                 try {

@@ -13,14 +13,14 @@ public class TestApp {
     private static BlockingQueue<String> queue;
     private static ConcurrentHashMap<String, List<String>> map;
     private static ExecutorService executorService;
-    private static List<Future<ConcurrentHashMap<String, List<String>>>> futures;
+    private static List<Future<Object>> futures;
 
     @BeforeAll
     public static void setUp() throws InterruptedException {
         queue = new LinkedBlockingQueue<>(5);
         map = new ConcurrentHashMap<>();
 
-        List<Callable<ConcurrentHashMap<String, List<String>>>> taskList =
+        List<Callable<Object>> taskList =
                 List.of(new Producer(queue), new Consumer(queue, map), new Consumer2(queue, map));
 
         executorService = Executors.newCachedThreadPool();
@@ -85,5 +85,11 @@ public class TestApp {
     public void checkFuturesList() {
         Assertions.assertFalse(futures.isEmpty());
         Assertions.assertEquals(3, futures.size());
+    }
+
+    @Test
+    public void testGetCountWord() {
+        List<String> collect = List.of("Hello!", "My name", "is Misha");
+        Assertions.assertEquals(5, App.getCountWords(collect));
     }
 }
